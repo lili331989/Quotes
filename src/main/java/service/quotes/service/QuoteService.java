@@ -42,26 +42,14 @@ public class QuoteService {
     public boolean check (Quote quote) {
         if (quote.getAsk() == null) return false;
         if (quote.getIsin() != null && quote.getIsin().length() != 12) return false;
-        if (quote.getBid() != null && quote.getBid() > quote.getAsk() || quote.getBid() == quote.getAsk()) return false;
+        if (quote.getBid() != null && quote.getBid() >= quote.getAsk()) return false;
         return true;
     }
 
     public InnerEnergyLevel calculateAndSaveElvl (Quote quote) {
         synchronized (locks.computeIfAbsent(quote.getIsin(), k -> new Object()))
         {
-            InnerEnergyLevel energyLevel = energyLevelRepo.findByIsin(quote.getIsin());
-            if (energyLevel == null && quote.getBid() != null) {
-                energyLevel = new InnerEnergyLevel(quote.getIsin(), quote.getBid());
-            }
-            else if (energyLevel == null && quote.getBid() == null) {
-                energyLevel = new InnerEnergyLevel(quote.getIsin(), quote.getAsk());
-            }
-            else if (quote.getBid() != null && quote.getBid() > energyLevel.getElvl()){
-                energyLevel.setElvl(quote.getBid());
-            }
-            else if (quote.getAsk() < energyLevel.getElvl()){
-                energyLevel.setElvl(quote.getAsk());
-            }
+            InnerEnergyLevel energyLevel = calculateElvl(quote);
             energyLevelRepo.save(energyLevel);
             locks.remove(quote.getIsin());
             return energyLevel;
@@ -70,5 +58,19 @@ public class QuoteService {
 
     public InnerQuote saveQuote (Quote quote) {
         return quoteRepo.save(new InnerQuote(quote.getIsin(), quote.getBid(), quote.getAsk()));
+    }
+
+    public InnerEnergyLevel calculateElvl (Quote quote){
+        InnerEnergyLevel energyLevel = energyLevelRepo.findByIsin(quote.getIsin());
+        if (energyLevel == null) {
+            energyLevel = new InnerEnergyLevel(quote.getIsin(), quote.getBid() != null ? quote.getBid() : quote.getAsk());
+        }
+        else if (quote.getBid() != null && quote.getBid() > energyLevel.getElvl()){
+            energyLevel.setElvl(quote.getBid());
+        }
+        else if (quote.getAsk() < energyLevel.getElvl()){
+            energyLevel.setElvl(quote.getAsk());
+        }
+        return energyLevel;
     }
 }

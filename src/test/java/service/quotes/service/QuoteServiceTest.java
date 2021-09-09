@@ -35,6 +35,7 @@ public class QuoteServiceTest {
     public void quoteServiceCalculateTest() {
         assertEquals (quoteService.calculateAndSaveElvl(quote).getIsin(), "RU00A0JX0J2");
         assertEquals (quoteService.calculateAndSaveElvl(quote).getElvl(), 100.2);
+        assertEquals (quoteService.calculateAndSaveElvl(quote).getId(), new Integer(1));
     }
 
     @Test
