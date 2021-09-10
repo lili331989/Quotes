@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class QuoteService {
-    private QuoteRepo quoteRepo;
-    private EnergyLevelRepo energyLevelRepo;
-    private Map<String, Object> locks;
+    private final QuoteRepo quoteRepo;
+    private final EnergyLevelRepo energyLevelRepo;
+    private final Map<String, Object> locks;
 
     @Autowired
     public QuoteService (QuoteRepo quoteRepo, EnergyLevelRepo energyLevelRepo) {
@@ -39,12 +39,6 @@ public class QuoteService {
         return elvls;
     }
 
-    public boolean check (Quote quote) {
-        if (quote.getAsk() == null) return false;
-        if (quote.getIsin() != null && quote.getIsin().length() != 12) return false;
-        if (quote.getBid() != null && quote.getBid() >= quote.getAsk()) return false;
-        return true;
-    }
 
     public InnerEnergyLevel calculateAndSaveElvl (Quote quote) {
         synchronized (locks.computeIfAbsent(quote.getIsin(), k -> new Object()))

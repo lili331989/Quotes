@@ -44,10 +44,4 @@ public class QuoteServiceTest {
         assertEquals (quoteService.getElvlByIsin(isin).getElvl(), 100.2);
     }
 
-    @Test
-    public void checkTest() {
-        Quote quoteTest = new Quote("RU00A0JX0J", 100.2, 101.9);
-        assertEquals (quoteService.check(quoteTest), false);
-    }
-
 }

@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import service.quotes.domain.EnergyLevel;
 import service.quotes.domain.InnerEnergyLevel;
 import service.quotes.domain.InnerQuote;
+import service.quotes.domain.Quote;
 import service.quotes.service.QuoteService;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public class QuoteControllerTest {
     private QuoteService quoteService;
     private EnergyLevel energyLevel;
     private InnerEnergyLevel innerEnergyLevel;
+    private Quote wrongQuote;
+    private Quote quote;
     private InnerQuote innerQuote;
     private String isin = "RU00A0JX0J2";
     private List<EnergyLevel> energyLevelList;
@@ -43,6 +46,8 @@ public class QuoteControllerTest {
     public void setup(){
         energyLevel = new EnergyLevel("RU00A0JX0J2",100.2);
         innerEnergyLevel = new InnerEnergyLevel("RU00A0JX0J2",100.2);
+        wrongQuote = new Quote("RU00A0JX0J22", 102.2, 100.2);
+        quote = new Quote("RU00A0JX0J22", 100.2, 101.9);
         innerQuote = new InnerQuote("RU00A0JX0J2", 100.2, 101.9);
         mockMvc = MockMvcBuilders.standaloneSetup(quoteController).build();
     }
@@ -53,39 +58,45 @@ public class QuoteControllerTest {
     }
 
     @Test
-    public void GetMappingOfAllEnergyLevels() throws Exception {
+    public void getElvlsTest() throws Exception {
         when(quoteService.getElvls()).thenReturn(energyLevelList);
         mockMvc.perform(MockMvcRequestBuilders.get("/quote/getElvls").
-                contentType(MediaType.APPLICATION_JSON).
-                content(asJsonString(energyLevel))).
-                andDo(MockMvcResultHandlers.print());
+                contentType(MediaType.APPLICATION_JSON)).
+                andExpect(status().isOk());
         verify(quoteService).getElvls();
         verify(quoteService,times(1)).getElvls();
     }
 
     @Test
-    public void PostMappingOfProduct() throws Exception{
+    public void saveQuoteAndEnergyLevelTest() throws Exception{
         when(quoteService.calculateAndSaveElvl(any())).thenReturn(innerEnergyLevel);
-        when(quoteService.check(any())).thenReturn(true);
         when(quoteService.saveQuote(any())).thenReturn(innerQuote);
         mockMvc.perform(MockMvcRequestBuilders.post("/quote/saveQuote").
                 contentType(MediaType.APPLICATION_JSON).
-                content(asJsonString(energyLevel))).
+                content(asJsonString(quote))).
                 andExpect(status().isCreated());
         verify(quoteService,times(1)).calculateAndSaveElvl(any());
     }
 
     @Test
-    public void GetMappingOfProductShouldReturnRespectiveProducct() throws Exception {
+    public void getElvlTest() throws Exception {
         when(quoteService.getElvlByIsin(isin)).thenReturn(energyLevel);
         mockMvc.perform(MockMvcRequestBuilders.get("/quote/getElvl/RU00A0JX0J2").
                 contentType(MediaType.APPLICATION_JSON).
-                content(asJsonString(energyLevel))).
+                content(asJsonString(isin))).
                 andExpect(MockMvcResultMatchers.status().isOk()).
                 andDo(MockMvcResultHandlers.print());
     }
 
-    public static String asJsonString(EnergyLevel energyLevel) {
+    @Test
+    public void whenInputIsInvalidThenReturnsStatus400() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/quote/saveQuote").
+                contentType(MediaType.APPLICATION_JSON).
+                content(asJsonString(wrongQuote))).
+                andExpect(status().isBadRequest());
+    }
+
+    public  static <T> String asJsonString(T energyLevel) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.writeValueAsString(energyLevel);

@@ -9,6 +9,7 @@ import service.quotes.domain.InnerEnergyLevel;
 import service.quotes.domain.Quote;
 import service.quotes.service.QuoteService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,14 +20,11 @@ public class QuoteController {
     private QuoteService quoteService;
 
     @PostMapping(value = "/saveQuote")
-    public ResponseEntity<EnergyLevel> saveQuoteAndEnergyLevel(@RequestBody Quote quote) {
-        if (quoteService.check(quote)){
+    public ResponseEntity<EnergyLevel> saveQuoteAndEnergyLevel(@Valid @RequestBody Quote quote) {
             quoteService.saveQuote(quote);
             InnerEnergyLevel innerEnergyLevel = quoteService.calculateAndSaveElvl(quote);
             EnergyLevel energyLevel = new EnergyLevel(innerEnergyLevel.getIsin(), innerEnergyLevel.getElvl());
             return new ResponseEntity<>(energyLevel, HttpStatus.CREATED);
-        }
-        else return null;
     }
 
     @GetMapping(value = "/getElvls")
