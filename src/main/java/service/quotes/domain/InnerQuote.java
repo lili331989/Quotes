@@ -20,7 +20,7 @@ public class InnerQuote {
     private Double ask;
 
     public InnerQuote(String isin, Double bid, Double ask) {
-        this.id = id;
+        this.isin = isin;
         this.bid = bid;
         this.ask = ask;
     }

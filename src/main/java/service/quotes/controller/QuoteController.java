@@ -29,7 +29,7 @@ public class QuoteController {
 
     @GetMapping(value = "/getElvls")
     public ResponseEntity<List<EnergyLevel>> getElvls() {
-        return new ResponseEntity<List<EnergyLevel>>(
+        return new ResponseEntity<>(
                  quoteService.getElvls(), HttpStatus.OK);
     }
 

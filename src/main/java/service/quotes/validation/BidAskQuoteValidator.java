@@ -9,11 +9,10 @@ public class BidAskQuoteValidator implements ConstraintValidator<QuoteAnnotation
     public void initialize(QuoteAnnotation constraintAnnotation) {
     }
 
-    public boolean isValid(Quote object, ConstraintValidatorContext context) {
-        if (!(object instanceof Quote)) {
-            throw new IllegalArgumentException("@Quote only applies to Quote");
+    public boolean isValid(Quote quote, ConstraintValidatorContext context) {
+        if (quote == null) {
+            throw new IllegalArgumentException("Quote null");
         }
-        Quote quote = (Quote) object;
-        return quote.getBid() == null ? true :  quote.getBid() < quote.getAsk();
+        return quote.getBid() == null || quote.getBid() < quote.getAsk();
     }
 }

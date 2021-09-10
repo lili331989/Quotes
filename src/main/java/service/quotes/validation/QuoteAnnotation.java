@@ -1,7 +1,5 @@
 package service.quotes.validation;
 
-import service.quotes.validation.BidAskQuoteValidator;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;

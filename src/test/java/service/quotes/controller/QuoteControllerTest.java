@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,12 +21,14 @@ import service.quotes.domain.InnerQuote;
 import service.quotes.domain.Quote;
 import service.quotes.service.QuoteService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class QuoteControllerTest {
     @Mock
     private QuoteService quoteService;
@@ -35,20 +37,24 @@ public class QuoteControllerTest {
     private Quote wrongQuote;
     private Quote quote;
     private InnerQuote innerQuote;
-    private String isin = "RU00A0JX0J2";
+    private String isin;
     private List<EnergyLevel> energyLevelList;
     @InjectMocks
     private QuoteController quoteController;
-
     @Autowired
     private MockMvc mockMvc;
     @BeforeEach
     public void setup(){
-        energyLevel = new EnergyLevel("RU00A0JX0J2",100.2);
-        innerEnergyLevel = new InnerEnergyLevel("RU00A0JX0J2",100.2);
+        isin = "RU00A0JX0J2";
+        energyLevel = new EnergyLevel("RU00A0JX0J22",100.2);
+        EnergyLevel energyLevel2 = new EnergyLevel("RU00A0JX0J23",100.2);
+        energyLevelList = new ArrayList<>();
+        energyLevelList.add(energyLevel);
+        energyLevelList.add(energyLevel2);
+        innerEnergyLevel = new InnerEnergyLevel(1, "RU00A0JX0J22",100.2);
         wrongQuote = new Quote("RU00A0JX0J22", 102.2, 100.2);
         quote = new Quote("RU00A0JX0J22", 100.2, 101.9);
-        innerQuote = new InnerQuote("RU00A0JX0J2", 100.2, 101.9);
+        innerQuote = new InnerQuote(1, "RU00A0JX0J22", 100.2, 101.9);
         mockMvc = MockMvcBuilders.standaloneSetup(quoteController).build();
     }
 

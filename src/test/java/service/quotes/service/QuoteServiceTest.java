@@ -43,5 +43,4 @@ public class QuoteServiceTest {
         String isin = "RU00A0JX0J2";
         assertEquals (quoteService.getElvlByIsin(isin).getElvl(), 100.2);
     }
-
 }
