@@ -15,14 +15,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Quote implements Serializable {
-    @Size(min = 12, max = 12)
-    @NotNull
+    @Size(min = 12, max = 12, message = "Size must be 12")
+    @NotNull (message = "Isin must not be null")
     private String isin;
 
     @Valid
     private Double bid;
 
     @Valid
-    @NotNull
+    @NotNull (message = "<ask> must not be null")
     private Double ask;
 }

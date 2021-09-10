@@ -13,6 +13,6 @@ public class BidAskQuoteValidator implements ConstraintValidator<QuoteAnnotation
         if (quote == null) {
             throw new IllegalArgumentException("Quote null");
         }
-        return quote.getBid() == null || quote.getBid() < quote.getAsk();
+        return quote.getAsk() == null || quote.getBid() == null || quote.getBid() < quote.getAsk();
     }
 }

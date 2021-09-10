@@ -52,7 +52,7 @@ public class QuoteControllerTest {
         energyLevelList.add(energyLevel);
         energyLevelList.add(energyLevel2);
         innerEnergyLevel = new InnerEnergyLevel(1, "RU00A0JX0J22",100.2);
-        wrongQuote = new Quote("RU00A0JX0J22", 102.2, 100.2);
+        wrongQuote = new Quote("RU00A0JX0J22", 102.1, 100.2);
         quote = new Quote("RU00A0JX0J22", 100.2, 101.9);
         innerQuote = new InnerQuote(1, "RU00A0JX0J22", 100.2, 101.9);
         mockMvc = MockMvcBuilders.standaloneSetup(quoteController).build();

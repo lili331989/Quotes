@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface QuoteAnnotation {
-    String message() default "Invalid bid and isin";
+    String message() default "Bid must be less than ask";
     Class<?>[] groups() default { };
     Class<? extends Payload>[] payload() default { };
 }
